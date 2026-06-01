@@ -40,6 +40,19 @@ if (url.pathname === '/ads.txt') {
     }
   );
 }
+		if (url.pathname === '/robots.txt') {
+  return new Response(
+`User-agent: *
+Allow: /
+
+Sitemap: https://vipba.nyc.mn/sitemap.xml`,
+    {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8'
+      }
+    }
+  );
+}
 		if (url.pathname === '/check') {
 			return handleCheckProxyRequest(request);
 		} else if (url.pathname === '/resolve') {
