@@ -30,13 +30,7 @@ export default {
 	async fetch(request, env) {
 		const 备案内容 = env.BEIAN ?? DEFAULT_BEIAN_CONTENT;
 		const url = new URL(request.url);
-// ---- ads.txt ----
-if (url.pathname === "/ads.txt") {
-   const adsTxt = # google.com, pub-8960977103937957, DIRECT, f08c47fec0942fa0;
-   return new Response(adsTxt.trim(), {
-     headers: { "content-type": "text/plain" }
-   });
-}
+
 		if (url.pathname === '/check') {
 			return handleCheckProxyRequest(request);
 		} else if (url.pathname === '/resolve') {
