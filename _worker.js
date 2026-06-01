@@ -298,6 +298,8 @@ function generateHTML(备案内容) {
 	return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8960977103937957"
+     crossorigin="anonymous"></script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="color-scheme" content="light dark">
