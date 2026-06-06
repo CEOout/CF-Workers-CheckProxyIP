@@ -1,4 +1,4 @@
-const DEFAULT_BEIAN_CONTENT = `© 2025 - 2026 Check Socks5 · 基于 <a href="https://vipba.nyc.mn" target="_blank" rel="noreferrer">Cloudflare Workers 构建与运行</a> · 今日访问人数：<span id="visit-count">···</span> · 站点维护：<a href="https://vipba.nyc.mn" target="_blank" rel="noreferrer">VIPba</a>
+const DEFAULT_BEIAN_CONTENT = `© 2025 - 2026 Check Socks5 · 基于 <a href="https://vipba.nyc.mn" target="_blank" rel="noreferrer">Cloudflare Workers 构建与运行</a> · 今日访问人数：<span id="visit-count">···</span> · 欢迎光临：<a href="https://vipba.nyc.mn" target="_blank" rel="noreferrer">VIPba</a>
 <script>
 (function () {
 	const visitCountElement = document.getElementById('visit-count');
