@@ -32,7 +32,7 @@ export default {
 		const url = new URL(request.url);
 if (url.pathname === '/ads.txt') {
   return new Response(
-    'google.com, pub-8960977103937957, DIRECT, f08c47fec0942fa0',
+    'google.com, pub-6961933958783546, DIRECT, f08c47fec0942fa0',
     {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8'
