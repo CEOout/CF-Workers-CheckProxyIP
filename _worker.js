@@ -553,6 +553,20 @@ function generateHTML(备案内容) {
 			margin-bottom: 24px;
 		}
 
+		.site-header-row {
+			display: flex;
+			align-items: center;
+			gap: 28px;
+		}
+
+		.site-brand {
+			font-size: 22px;
+			font-weight: 800;
+			letter-spacing: -0.01em;
+			color: var(--text);
+			white-space: nowrap;
+		}
+
 		.brand {
 			display: flex;
 			flex-direction: column;
@@ -560,14 +574,16 @@ function generateHTML(备案内容) {
 		}
 
 		.site-nav {
+			flex: 1;
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-			justify-content: flex-start;
-			gap: 10px 28px;
+			justify-content: center;
+			gap: 10px 26px;
 			margin-top: 0;
-			font-size: 16px;
+			font-size: 14px;
 			font-weight: 600;
+			position: relative;
 		}
 
 		.site-nav a {
@@ -576,16 +592,81 @@ function generateHTML(备案内容) {
 			line-height: 1;
 		}
 
-		.site-nav .theme-toggle {
-			margin-left: auto;
-		}
-
 		.site-nav a {
 			color: var(--muted);
 			text-decoration: none;
 			border-bottom: 1px solid transparent;
 			padding-bottom: 2px;
 			transition: color 0.2s ease, border-color 0.2s ease;
+		}
+
+		.nav-dropdown {
+			position: relative;
+		}
+
+		.nav-dropdown-trigger {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			border: none;
+			background: none;
+			padding: 0;
+			color: var(--muted);
+			font-size: 14px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			line-height: 1;
+		}
+
+		.nav-dropdown-trigger:hover {
+			color: var(--accent);
+		}
+
+		.nav-dropdown-caret {
+			transition: transform 0.2s ease;
+		}
+
+		.nav-dropdown.open .nav-dropdown-trigger {
+			color: var(--accent);
+		}
+
+		.nav-dropdown.open .nav-dropdown-caret {
+			transform: rotate(180deg);
+		}
+
+		.nav-dropdown-menu {
+			position: absolute;
+			top: calc(100% + 14px);
+			left: 50%;
+			transform: translateX(-50%);
+			display: none;
+			flex-direction: column;
+			gap: 2px;
+			min-width: 150px;
+			padding: 8px;
+			border-radius: 14px;
+			border: 1px solid var(--line);
+			background: var(--bg-deep);
+			box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+			z-index: 30;
+		}
+
+		.nav-dropdown.open .nav-dropdown-menu {
+			display: flex;
+		}
+
+		.nav-dropdown-menu a {
+			padding: 8px 10px;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			border-bottom: none !important;
+		}
+
+		.nav-dropdown-menu a:hover {
+			background: rgba(97, 219, 255, 0.1);
+			color: var(--accent);
 		}
 
 		.site-nav a:hover {
@@ -2690,6 +2771,20 @@ function generateHTML(备案内容) {
 				max-width: none;
 			}
 
+			.site-header-row {
+				flex-wrap: wrap;
+			}
+
+			.site-nav {
+				justify-content: flex-start;
+				order: 3;
+				flex-basis: 100%;
+			}
+
+			.site-brand {
+				flex: 1;
+			}
+
 			.guide-grid {
 				grid-template-columns: 1fr;
 			}
@@ -2819,15 +2914,26 @@ function generateHTML(备案内容) {
 		<div class="ambient ambient-two"></div>
 
 		<header class="site-header">
-			<nav class="site-nav" aria-label="网站导航">
-				<a href="/">首页</a>
-				<a href="/#proxyip-check">ProxyIP检测</a>
-				<a href="/ip">IP地址检测</a>
-				<a href="/faq">常见问题</a>
-				<a href="/about">关于我们</a>
-				<a href="/contact">联系我们</a>
-				<a href="/privacy">隐私政策</a>
-				<a href="/terms">服务条款</a>
+			<div class="site-header-row">
+				<div class="site-brand">IP工具箱</div>
+				<nav class="site-nav" aria-label="网站导航">
+					<a href="/">首页</a>
+					<a href="/#proxyip-check">ProxyIP检测</a>
+					<a href="/ip">IP地址检测</a>
+					<a href="/faq">常见问题</a>
+					<div class="nav-dropdown" id="navMoreDropdown">
+						<button type="button" class="nav-dropdown-trigger" id="navMoreBtn" aria-haspopup="true" aria-expanded="false">
+							<span>更多</span>
+							<svg class="nav-dropdown-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+						</button>
+						<div class="nav-dropdown-menu" id="navMoreMenu">
+							<a href="/about">关于我们</a>
+							<a href="/contact">联系我们</a>
+							<a href="/privacy">隐私政策</a>
+							<a href="/terms">服务条款</a>
+						</div>
+					</div>
+				</nav>
 				<button class="theme-toggle" type="button" id="themeToggle" aria-label="切换日间和夜间模式" title="切换日间和夜间模式">
 					<span class="theme-toggle-switch" aria-hidden="true">
 						<svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2847,8 +2953,25 @@ function generateHTML(备案内容) {
 						</svg>
 					</span>
 				</button>
-			</nav>
+			</div>
 			<div class="header-note">基于 Cloudflare 的 ProxyIP 检测工具，支持单个或批量目标解析、可用性验证与出口信息查看。</div>
+			<script>
+				(function () {
+					var dropdown = document.getElementById('navMoreDropdown');
+					var trigger = document.getElementById('navMoreBtn');
+					if (dropdown && trigger) {
+						trigger.addEventListener('click', function (e) {
+							e.stopPropagation();
+							var isOpen = dropdown.classList.toggle('open');
+							trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+						});
+						document.addEventListener('click', function () {
+							dropdown.classList.remove('open');
+							trigger.setAttribute('aria-expanded', 'false');
+						});
+					}
+				})();
+			</script>
 		</header>
 
 		<main class="site-main">
@@ -5602,20 +5725,27 @@ function generateHTML(备案内容) {
 
 // ==================== 静态内容页面 (About / Privacy / Terms / Contact / FAQ) ====================
 function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
-	const navItems = [
+	const topNavItems = [
 		{ href: '/', label: '首页' },
 		{ href: '/#proxyip-check', label: 'ProxyIP检测' },
 		{ href: '/ip', label: 'IP地址检测' },
-		{ href: '/faq', label: '常见问题' },
+		{ href: '/faq', label: '常见问题' }
+	];
+	const moreNavItems = [
 		{ href: '/about', label: '关于我们' },
 		{ href: '/contact', label: '联系我们' },
 		{ href: '/privacy', label: '隐私政策' },
 		{ href: '/terms', label: '服务条款' }
 	];
-	const navHtml = navItems.map(item => {
+	const topNavHtml = topNavItems.map(item => {
 		const isActive = item.href === activePath;
 		return `<a href="${item.href}"${isActive ? ' aria-current="page"' : ''}>${item.label}</a>`;
-	}).join('\n\t\t\t\t');
+	}).join('\n\t\t\t\t\t');
+	const moreIsActive = moreNavItems.some(item => item.href === activePath);
+	const moreNavHtml = moreNavItems.map(item => {
+		const isActive = item.href === activePath;
+		return `<a href="${item.href}"${isActive ? ' aria-current="page"' : ''}>${item.label}</a>`;
+	}).join('\n\t\t\t\t\t\t');
 
 	return `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -5686,12 +5816,28 @@ function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
 			margin: 0 auto;
 			padding: 40px 20px 64px;
 		}
+		.static-nav-row {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: 14px 24px;
+			margin-bottom: 32px;
+		}
+		.site-brand {
+			font-size: 20px;
+			font-weight: 800;
+			letter-spacing: -0.01em;
+			color: var(--text);
+			white-space: nowrap;
+		}
 		.static-nav {
 			display: flex;
 			flex-wrap: wrap;
+			align-items: center;
 			gap: 8px 20px;
-			margin-bottom: 32px;
 			font-size: 14px;
+			font-weight: 600;
+			position: relative;
 		}
 		.static-nav a {
 			color: var(--muted);
@@ -5702,6 +5848,64 @@ function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
 		.static-nav a:hover, .static-nav a[aria-current="page"] {
 			color: var(--accent);
 			border-color: var(--accent);
+		}
+		.nav-dropdown {
+			position: relative;
+		}
+		.nav-dropdown-trigger {
+			display: inline-flex;
+			align-items: center;
+			gap: 4px;
+			border: none;
+			background: none;
+			padding: 0;
+			color: var(--muted);
+			font-size: 14px;
+			font-weight: 600;
+			font-family: inherit;
+			cursor: pointer;
+			line-height: 1;
+		}
+		.nav-dropdown-trigger:hover, .nav-dropdown-trigger[data-active="true"] {
+			color: var(--accent);
+		}
+		.nav-dropdown-caret {
+			transition: transform 0.2s ease;
+		}
+		.nav-dropdown.open .nav-dropdown-trigger {
+			color: var(--accent);
+		}
+		.nav-dropdown.open .nav-dropdown-caret {
+			transform: rotate(180deg);
+		}
+		.nav-dropdown-menu {
+			position: absolute;
+			top: calc(100% + 14px);
+			left: 0;
+			display: none;
+			flex-direction: column;
+			gap: 2px;
+			min-width: 150px;
+			padding: 8px;
+			border-radius: 14px;
+			border: 1px solid var(--line);
+			background: var(--bg-deep);
+			box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+			z-index: 30;
+		}
+		.nav-dropdown.open .nav-dropdown-menu {
+			display: flex;
+		}
+		.nav-dropdown-menu a {
+			padding: 8px 10px;
+			border-radius: 8px;
+			font-size: 14px;
+			font-weight: 500;
+			border-bottom: none !important;
+		}
+		.nav-dropdown-menu a:hover {
+			background: rgba(97, 219, 255, 0.1);
+			color: var(--accent);
 		}
 		.static-card {
 			background: var(--panel);
@@ -5818,14 +6022,43 @@ function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
 </head>
 <body>
 	<div class="static-shell">
-		<nav class="static-nav" aria-label="网站导航">
-				${navHtml}
-		</nav>
+		<div class="static-nav-row">
+			<div class="site-brand">IP工具箱</div>
+			<nav class="static-nav" aria-label="网站导航">
+				${topNavHtml}
+				<div class="nav-dropdown" id="navMoreDropdown">
+					<button type="button" class="nav-dropdown-trigger" id="navMoreBtn" data-active="${moreIsActive ? 'true' : 'false'}" aria-haspopup="true" aria-expanded="false">
+						<span>更多</span>
+						<svg class="nav-dropdown-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
+					</button>
+					<div class="nav-dropdown-menu" id="navMoreMenu">
+						${moreNavHtml}
+					</div>
+				</div>
+			</nav>
+		</div>
 		<div class="static-card">
 			${bodyHtml}
 		</div>
-		<div class="static-footer">© 2025 - 2026 Check ProxyIP · <a href="https://vipba.nyc.mn">vipba.nyc.mn</a></div>
+		<div class="static-footer">© 2025 - 2026 IP工具箱 · <a href="https://vipba.nyc.mn">vipba.nyc.mn</a></div>
 	</div>
+	<script>
+		(function () {
+			var dropdown = document.getElementById('navMoreDropdown');
+			var trigger = document.getElementById('navMoreBtn');
+			if (dropdown && trigger) {
+				trigger.addEventListener('click', function (e) {
+					e.stopPropagation();
+					var isOpen = dropdown.classList.toggle('open');
+					trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+				});
+				document.addEventListener('click', function () {
+					dropdown.classList.remove('open');
+					trigger.setAttribute('aria-expanded', 'false');
+				});
+			}
+		})();
+	</script>
 </body>
 </html>`;
 }
