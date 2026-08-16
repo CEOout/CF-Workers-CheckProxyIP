@@ -2921,18 +2921,10 @@ function generateHTML(备案内容) {
 					<a href="/#proxyip-check">ProxyIP检测</a>
 					<a href="/ip">IP地址检测</a>
 					<a href="/faq">常见问题</a>
-					<div class="nav-dropdown" id="navMoreDropdown">
-						<button type="button" class="nav-dropdown-trigger" id="navMoreBtn" aria-haspopup="true" aria-expanded="false">
-							<span>更多</span>
-							<svg class="nav-dropdown-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
-						</button>
-						<div class="nav-dropdown-menu" id="navMoreMenu">
-							<a href="/about">关于我们</a>
-							<a href="/contact">联系我们</a>
-							<a href="/privacy">隐私政策</a>
-							<a href="/terms">服务条款</a>
-						</div>
-					</div>
+					<a href="/about">关于我们</a>
+					<a href="/contact">联系我们</a>
+					<a href="/privacy">隐私政策</a>
+					<a href="/terms">服务条款</a>
 				</nav>
 				<button class="theme-toggle" type="button" id="themeToggle" aria-label="切换日间和夜间模式" title="切换日间和夜间模式">
 					<span class="theme-toggle-switch" aria-hidden="true">
@@ -2955,23 +2947,6 @@ function generateHTML(备案内容) {
 				</button>
 			</div>
 			<div class="header-note">基于 Cloudflare 的 ProxyIP 检测工具，支持单个或批量目标解析、可用性验证与出口信息查看。</div>
-			<script>
-				(function () {
-					var dropdown = document.getElementById('navMoreDropdown');
-					var trigger = document.getElementById('navMoreBtn');
-					if (dropdown && trigger) {
-						trigger.addEventListener('click', function (e) {
-							e.stopPropagation();
-							var isOpen = dropdown.classList.toggle('open');
-							trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-						});
-						document.addEventListener('click', function () {
-							dropdown.classList.remove('open');
-							trigger.setAttribute('aria-expanded', 'false');
-						});
-					}
-				})();
-			</script>
 		</header>
 
 		<main class="site-main">
@@ -5725,27 +5700,20 @@ function generateHTML(备案内容) {
 
 // ==================== 静态内容页面 (About / Privacy / Terms / Contact / FAQ) ====================
 function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
-	const topNavItems = [
+	const navItems = [
 		{ href: '/', label: '首页' },
 		{ href: '/#proxyip-check', label: 'ProxyIP检测' },
 		{ href: '/ip', label: 'IP地址检测' },
-		{ href: '/faq', label: '常见问题' }
-	];
-	const moreNavItems = [
+		{ href: '/faq', label: '常见问题' },
 		{ href: '/about', label: '关于我们' },
 		{ href: '/contact', label: '联系我们' },
 		{ href: '/privacy', label: '隐私政策' },
 		{ href: '/terms', label: '服务条款' }
 	];
-	const topNavHtml = topNavItems.map(item => {
+	const navHtml = navItems.map(item => {
 		const isActive = item.href === activePath;
 		return `<a href="${item.href}"${isActive ? ' aria-current="page"' : ''}>${item.label}</a>`;
-	}).join('\n\t\t\t\t\t');
-	const moreIsActive = moreNavItems.some(item => item.href === activePath);
-	const moreNavHtml = moreNavItems.map(item => {
-		const isActive = item.href === activePath;
-		return `<a href="${item.href}"${isActive ? ' aria-current="page"' : ''}>${item.label}</a>`;
-	}).join('\n\t\t\t\t\t\t');
+	}).join('\n\t\t\t\t');
 
 	return `<!DOCTYPE html>
 <html lang="zh-CN">
@@ -6025,16 +5993,7 @@ function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
 		<div class="static-nav-row">
 			<div class="site-brand">IP工具箱</div>
 			<nav class="static-nav" aria-label="网站导航">
-				${topNavHtml}
-				<div class="nav-dropdown" id="navMoreDropdown">
-					<button type="button" class="nav-dropdown-trigger" id="navMoreBtn" data-active="${moreIsActive ? 'true' : 'false'}" aria-haspopup="true" aria-expanded="false">
-						<span>更多</span>
-						<svg class="nav-dropdown-caret" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"></path></svg>
-					</button>
-					<div class="nav-dropdown-menu" id="navMoreMenu">
-						${moreNavHtml}
-					</div>
-				</div>
+				${navHtml}
 			</nav>
 		</div>
 		<div class="static-card">
@@ -6042,23 +6001,6 @@ function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
 		</div>
 		<div class="static-footer">© 2025 - 2026 IP工具箱 · <a href="https://vipba.nyc.mn">vipba.nyc.mn</a></div>
 	</div>
-	<script>
-		(function () {
-			var dropdown = document.getElementById('navMoreDropdown');
-			var trigger = document.getElementById('navMoreBtn');
-			if (dropdown && trigger) {
-				trigger.addEventListener('click', function (e) {
-					e.stopPropagation();
-					var isOpen = dropdown.classList.toggle('open');
-					trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-				});
-				document.addEventListener('click', function () {
-					dropdown.classList.remove('open');
-					trigger.setAttribute('aria-expanded', 'false');
-				});
-			}
-		})();
-	</script>
 </body>
 </html>`;
 }
