@@ -81,6 +81,21 @@ Sitemap: https://vipba.nyc.mn/sitemap.xml`,
 		} else if (url.pathname === '/resolve-batch') {
 			return handleResolveBatchRequest(request);
 		} else if (url.pathname === '/locations') return fetch(new Request('https://speed.cloudflare.com/locations', { headers: { 'Referer': 'https://speed.cloudflare.com/' } }));
+		else if (url.pathname === '/sitemap.xml') {
+			return new Response(generateSitemapXML(), {
+				headers: { 'Content-Type': 'application/xml; charset=UTF-8' }
+			});
+		} else if (url.pathname === '/about' || url.pathname === '/about/') {
+			return new Response(generateAboutHTML(), { headers: { 'Content-Type': 'text/html; charset=UTF-8' } });
+		} else if (url.pathname === '/privacy' || url.pathname === '/privacy/') {
+			return new Response(generatePrivacyHTML(), { headers: { 'Content-Type': 'text/html; charset=UTF-8' } });
+		} else if (url.pathname === '/terms' || url.pathname === '/terms/') {
+			return new Response(generateTermsHTML(), { headers: { 'Content-Type': 'text/html; charset=UTF-8' } });
+		} else if (url.pathname === '/contact' || url.pathname === '/contact/') {
+			return new Response(generateContactHTML(), { headers: { 'Content-Type': 'text/html; charset=UTF-8' } });
+		} else if (url.pathname === '/faq' || url.pathname === '/faq/') {
+			return new Response(generateFaqHTML(), { headers: { 'Content-Type': 'text/html; charset=UTF-8' } });
+		}
 		return new Response(generateHTML(备案内容), {
 			headers: { 'Content-Type': 'text/html; charset=UTF-8' }
 		});
@@ -316,7 +331,13 @@ function generateHTML(备案内容) {
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="color-scheme" content="light dark">
-	<title>Check ProxyIP</title>
+	<title>Check ProxyIP - 免费在线 ProxyIP 检测与筛选工具</title>
+	<meta name="description" content="Check ProxyIP 是一款基于 Cloudflare Workers 的免费在线工具，支持单个或批量检测 ProxyIP / IPv6 / 域名的连通性与出口信息，帮助 edgetunnel、epeius 等项目快速筛选可用的中转节点。">
+	<link rel="canonical" href="https://vipba.nyc.mn/">
+	<meta property="og:title" content="Check ProxyIP - 免费在线 ProxyIP 检测与筛选工具">
+	<meta property="og:description" content="基于 Cloudflare Workers 的 ProxyIP 检测工具，支持单个或批量目标解析、可用性验证与出口信息查看。">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://vipba.nyc.mn/">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
@@ -534,6 +555,27 @@ function generateHTML(备案内容) {
 			display: flex;
 			flex-direction: column;
 			gap: 12px;
+		}
+
+		.site-nav {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 6px 18px;
+			margin-top: 10px;
+			font-size: 13px;
+		}
+
+		.site-nav a {
+			color: var(--muted);
+			text-decoration: none;
+			border-bottom: 1px solid transparent;
+			padding-bottom: 2px;
+			transition: color 0.2s ease, border-color 0.2s ease;
+		}
+
+		.site-nav a:hover {
+			color: var(--accent);
+			border-color: var(--accent);
 		}
 
 		.brand-chip {
@@ -1516,6 +1558,11 @@ function generateHTML(备案内容) {
 		.guide-tip {
 			position: relative;
 			z-index: 1;
+		}
+
+		.ad-slot {
+			max-width: 728px;
+			margin: 8px auto 0;
 		}
 
 		.guide-header {
@@ -2785,6 +2832,14 @@ function generateHTML(备案内容) {
 				</div>
 			</div>
 			<div class="header-note">基于 Cloudflare 的 ProxyIP 检测工具，支持单个或批量目标解析、可用性验证与出口信息查看。</div>
+			<nav class="site-nav" aria-label="网站导航">
+				<a href="/">首页</a>
+				<a href="/faq">常见问题</a>
+				<a href="/about">关于我们</a>
+				<a href="/contact">联系我们</a>
+				<a href="/privacy">隐私政策</a>
+				<a href="/terms">服务条款</a>
+			</nav>
 		</header>
 
 		<main class="site-main">
@@ -2993,9 +3048,65 @@ function generateHTML(备案内容) {
 				</div>
 
 				<div class="guide-tip">
-					<strong>这页检测的意义：</strong>本工具不是只做静态解析，而是尽量模拟真实链路去验证目标是否真的可用，帮助你更快筛掉“看起来在线、实际不可做代理”的候选 IP。
+					<strong>这页检测的意义：</strong>本工具不是只做静态解析，而是尽量模拟真实链路去验证目标是否真的可用，帮助你更快筛掉"看起来在线、实际不可做代理"的候选 IP。
 				</div>
 			</section>
+
+			<section class="surface-card guide-shell">
+				<div class="guide-header">
+					<div>
+						<p class="section-kicker">Tutorial</p>
+						<h2 class="results-title">配置教程与常见问题排查</h2>
+						<p class="results-subtitle">从获取节点、配置到项目里、再到检测失败时如何排查，完整走一遍流程。</p>
+					</div>
+					<div class="guide-badge">Step by Step</div>
+				</div>
+
+				<div class="guide-grid guide-grid-secondary">
+					<article class="guide-card">
+						<div class="guide-card-label">第一步</div>
+						<h3>获取候选 ProxyIP</h3>
+						<p>可以使用本页"获取更多 ProxyIP"模块，按地区和端口从 FOFA 网络测绘数据中筛选候选节点；也可以从社区维护的公开列表、GitHub 相关仓库的 Issue 区收集。无论来源是哪里，拿到的列表都建议先经过本工具重新检测一遍，因为这类节点的存活周期通常较短，几天甚至几小时后就可能失效。</p>
+					</article>
+
+					<article class="guide-card">
+						<div class="guide-card-label">第二步</div>
+						<h3>把可用节点配置进项目</h3>
+						<p>在 edgetunnel、epeius 等基于 Cloudflare Workers 的中转项目里，通常会有一个名为 <code>PROXYIP</code> 或类似命名的环境变量/配置项。将检测通过的 <code>IP:端口</code>（端口省略时默认为 443）填入对应配置后重新部署，项目就能借助该节点完成到 Cloudflare 边缘网络的出站连接。不同项目的变量名和填写格式略有差异，请以对应项目的官方文档为准。</p>
+					</article>
+
+					<article class="guide-card">
+						<div class="guide-card-label">第三步</div>
+						<h3>检测一直失败？先排查这几点</h3>
+						<ul class="guide-list">
+							<li>目标端口不是 443：换成"非标"端口重新检测，部分节点只在特定端口开放代理能力</li>
+							<li>输入的是纯域名：如果域名本身没有解析到可用节点，可尝试直接输入具体 IP</li>
+							<li>节点刚好过期：ProxyIP 存活时间普遍不长，换一批候选节点重新验证即可</li>
+							<li>批量检测响应慢：目标数量较多时验证会逐个进行，请耐心等待或减少单批数量</li>
+						</ul>
+					</article>
+
+					<article class="guide-card">
+						<div class="guide-card-label">安全提示</div>
+						<h3>使用 ProxyIP 前需要知道的事</h3>
+						<p>ProxyIP 大多是第三方开放或临时搭建的节点，本站只做技术层面的连通性检测，不对节点的所有权、稳定性或安全性做任何背书。请不要在通过不明节点中转的链路上传输账号密码等敏感信息，也请确保您的使用方式符合所在地区的法律法规，具体可参阅<a href="/terms">服务条款</a>。</p>
+					</article>
+				</div>
+			</section>
+
+			<div class="ad-slot" aria-hidden="false">
+				<!--
+					建议在此处插入手动广告单元（而不是依赖 Auto ads 自动铺满全页）。
+					做法：
+					1. 登录 AdSense 后台 -> 广告 -> 按网站 -> 关闭"自动广告"总开关
+					2. 广告 -> 按广告单元 -> 新建一个"展示广告"单元，拿到形如
+					   <ins class="adsbygoogle" data-ad-client="ca-pub-9460979221320693" data-ad-slot="你的广告位ID" ...></ins>
+					   的代码，替换掉下面这行注释即可。
+					这样可以保证广告只出现在本页真正有说明性内容的区域旁边，
+					而不会被自动投放到上面纯工具交互区（输入框/按钮/结果列表）里，
+					这正是本次被拒原因"在不包含发布商内容的屏幕上展示广告"要求规避的情况。
+				-->
+			</div>
 
 			<section class="surface-card proxy-search-shell" aria-labelledby="proxySearchTitle">
 				<div class="proxy-search-header">
@@ -3053,6 +3164,14 @@ function generateHTML(备案内容) {
 		</main>
 
 		<footer class="site-footer">
+			<nav class="site-nav" aria-label="页脚导航">
+				<a href="/">首页</a>
+				<a href="/faq">常见问题</a>
+				<a href="/about">关于我们</a>
+				<a href="/contact">联系我们</a>
+				<a href="/privacy">隐私政策</a>
+				<a href="/terms">服务条款</a>
+			</nav>
 			<div>${备案内容}</div>
 		</footer>
 	</div>
@@ -5468,6 +5587,299 @@ function generateHTML(备案内容) {
 	</script>
 </body>
 </html>`;
+}
+
+// ==================== 静态内容页面 (About / Privacy / Terms / Contact / FAQ) ====================
+function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
+	const navItems = [
+		{ href: '/', label: '首页' },
+		{ href: '/faq', label: '常见问题' },
+		{ href: '/about', label: '关于我们' },
+		{ href: '/contact', label: '联系我们' },
+		{ href: '/privacy', label: '隐私政策' },
+		{ href: '/terms', label: '服务条款' }
+	];
+	const navHtml = navItems.map(item => {
+		const isActive = item.href === activePath;
+		return `<a href="${item.href}"${isActive ? ' aria-current="page"' : ''}>${item.label}</a>`;
+	}).join('\n\t\t\t\t');
+
+	return `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9460979221320693"
+     crossorigin="anonymous"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="color-scheme" content="light dark">
+	<title>${pageTitle} - Check ProxyIP</title>
+	<meta name="description" content="${description}">
+	<link rel="canonical" href="https://vipba.nyc.mn${activePath}">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+	<script>
+		(function () {
+			const storageKey = 'cf_proxy_theme';
+			let theme = 'dark';
+			try {
+				const storedTheme = localStorage.getItem(storageKey);
+				if (storedTheme === 'light' || storedTheme === 'dark') {
+					theme = storedTheme;
+				} else {
+					theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+				}
+			} catch (error) {
+				theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+			}
+			document.documentElement.dataset.theme = theme;
+			document.documentElement.style.colorScheme = theme;
+		})();
+	</script>
+	<style>
+		:root {
+			--bg-base: #07111d;
+			--bg-deep: #0b1726;
+			--panel: rgba(10, 24, 40, 0.78);
+			--line: rgba(144, 180, 212, 0.18);
+			--text: #edf7ff;
+			--text-soft: #d4e4f3;
+			--muted: #8ea6bc;
+			--accent: #61dbff;
+			--accent-strong: #2dd4bf;
+			--radius-lg: 24px;
+		}
+		html[data-theme='light'] {
+			--bg-base: #eef6fb;
+			--bg-deep: #ffffff;
+			--panel: rgba(255, 255, 255, 0.78);
+			--line: rgba(95, 123, 150, 0.18);
+			--text: #10253d;
+			--text-soft: #23415a;
+			--muted: #61778f;
+			--accent: #0ea5e9;
+			--accent-strong: #14b8a6;
+		}
+		* { box-sizing: border-box; }
+		html, body { margin: 0; min-height: 100%; }
+		body {
+			font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+			color: var(--text);
+			background: var(--bg-base);
+			line-height: 1.7;
+		}
+		.static-shell {
+			max-width: 780px;
+			margin: 0 auto;
+			padding: 40px 20px 64px;
+		}
+		.static-nav {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px 20px;
+			margin-bottom: 32px;
+			font-size: 14px;
+		}
+		.static-nav a {
+			color: var(--muted);
+			text-decoration: none;
+			border-bottom: 1px solid transparent;
+			padding-bottom: 2px;
+		}
+		.static-nav a:hover, .static-nav a[aria-current="page"] {
+			color: var(--accent);
+			border-color: var(--accent);
+		}
+		.static-card {
+			background: var(--panel);
+			border: 1px solid var(--line);
+			border-radius: var(--radius-lg);
+			padding: 32px 36px;
+		}
+		.static-card h1 {
+			font-size: 28px;
+			margin: 0 0 8px;
+		}
+		.static-card .static-updated {
+			color: var(--muted);
+			font-size: 13px;
+			margin: 0 0 28px;
+		}
+		.static-card h2 {
+			font-size: 19px;
+			margin: 32px 0 10px;
+			color: var(--text);
+		}
+		.static-card p, .static-card li {
+			color: var(--text-soft);
+			font-size: 15px;
+		}
+		.static-card ul, .static-card ol {
+			padding-left: 22px;
+		}
+		.static-card a { color: var(--accent); }
+		.static-card .faq-item {
+			margin-bottom: 24px;
+		}
+		.static-footer {
+			text-align: center;
+			color: var(--muted);
+			font-size: 12px;
+			margin-top: 32px;
+		}
+	</style>
+</head>
+<body>
+	<div class="static-shell">
+		<nav class="static-nav" aria-label="网站导航">
+				${navHtml}
+		</nav>
+		<div class="static-card">
+			${bodyHtml}
+		</div>
+		<div class="static-footer">© 2025 - 2026 Check ProxyIP · <a href="https://vipba.nyc.mn">vipba.nyc.mn</a></div>
+	</div>
+</body>
+</html>`;
+}
+
+function generateAboutHTML() {
+	const body = `
+		<h1>关于我们</h1>
+		<p class="static-updated">最近更新：2026 年 8 月</p>
+		<p>Check ProxyIP 是一个运行在 Cloudflare Workers 上的免费在线工具，用于检测和筛选「ProxyIP」——也就是能够帮助 Cloudflare Workers 项目绕开官方出站限制、代理访问 Cloudflare 边缘网络的第三方中转节点。</p>
+		<p>这个项目最初是为了解决一个具体的技术问题而写的：Cloudflare Workers 官方文档明确说明，指向 Cloudflare 自身 IP 段的出站 TCP 连接会被阻断，这导致一些依赖直连的自建代理项目（例如社区里常见的 edgetunnel、epeius 等开源项目）无法直接工作，必须借助一个可用的第三方中转 IP 才能继续访问 Cloudflare 服务。在实际使用中我们发现，网络上流传的"可用 ProxyIP 列表"经常已经失效，缺少一个能够实时验证连通性的工具，于是做了这个站点。</p>
+		<h2>我们提供什么</h2>
+		<ul>
+			<li>单个或批量输入 IP、IPv6、域名，实时检测其是否能作为可用的 ProxyIP</li>
+			<li>基于真实 TCP 连接的验证方式，而不是简单的 ping 或端口扫描，尽量还原真实使用场景</li>
+			<li>检测结果的出口地区、可用端口等信息展示，并支持导出为文本或表格</li>
+			<li>结合 FOFA 网络测绘数据，按端口和地区发现新的候选节点，方便继续验证</li>
+		</ul>
+		<h2>关于开发者</h2>
+		<p>本站由一名对网络基础设施和 Cloudflare Workers 生态感兴趣的独立开发者维护，不代表任何公司或商业机构，也不隶属于 Cloudflare。工具完全免费使用，网站通过展示少量广告来补贴 Cloudflare Workers 与相关 API 调用的运行成本。</p>
+		<p>如果你在使用过程中遇到问题，或者有功能建议，欢迎通过<a href="/contact">联系我们</a>页面与我们沟通。</p>
+	`;
+	return generateStaticPage('关于我们', 'Check ProxyIP 是一个基于 Cloudflare Workers 的免费在线工具，用于检测和验证可用的 ProxyIP 中转节点，了解项目背景与开发初衷。', '/about', body);
+}
+
+function generatePrivacyHTML() {
+	const body = `
+		<h1>隐私政策</h1>
+		<p class="static-updated">生效日期：2026 年 8 月 16 日</p>
+		<p>本隐私政策说明 Check ProxyIP（以下简称"本站"，网址 vipba.nyc.mn）在您使用本站服务时会如何处理相关信息。我们非常重视您的隐私，请在使用本站前仔细阅读本政策。</p>
+
+		<h2>1. 我们收集的信息</h2>
+		<p>本站的核心功能是检测用户主动输入的 IP、IPv6 地址或域名是否可以作为 ProxyIP 使用。这些输入内容仅用于发起检测请求，我们不会将其与您的身份信息关联存储，也不会用于本工具功能之外的其他用途。除此之外，本站可能通过标准的服务器日志方式，自动记录访问时的浏览器类型、大致地理位置（国家/地区级别）、访问时间和引荐来源等技术信息，用于统计访问量和排查故障。</p>
+
+		<h2>2. 第三方服务与 Cookie</h2>
+		<p>本站使用了以下第三方服务，这些服务可能会在您的设备上设置 Cookie 或使用类似技术：</p>
+		<ul>
+			<li><strong>Google AdSense：</strong>本站通过 Google AdSense 展示广告。Google 及其合作方可能使用 Cookie（包括 DoubleClick Cookie）根据您先前访问本站或其他网站的记录来投放广告。您可以访问 <a href="https://adssettings.google.com/" target="_blank" rel="noreferrer">Google 广告设置</a> 了解并管理个性化广告偏好，也可以访问 <a href="https://www.aboutads.info/choices/" target="_blank" rel="noreferrer">www.aboutads.info</a> 选择退出第三方供应商的个性化广告。</li>
+			<li><strong>访问统计：</strong>本站首页使用了一个轻量级的访问计数服务用于统计每日访问量，该服务不会收集可识别个人身份的信息。</li>
+			<li><strong>Cloudflare：</strong>本站部署在 Cloudflare Workers 上，Cloudflare 作为基础设施服务商可能按其自身隐私政策处理网络层面的请求数据。</li>
+			<li><strong>FOFA：</strong>"获取更多 ProxyIP"功能会调用 FOFA 网络测绘数据库的公开检索接口，仅用于展示候选 IP 列表，不涉及您的个人数据。</li>
+		</ul>
+
+		<h2>3. 我们如何使用信息</h2>
+		<p>我们收集的技术信息仅用于：维持网站正常运行、进行匿名化的访问统计与分析、排查并修复功能故障、展示与优化广告投放。我们不会出售您的信息，也不会将其用于本政策未说明的其他商业目的。</p>
+
+		<h2>4. 未成年人隐私</h2>
+		<p>本站不面向 13 周岁以下的儿童，也不会有意收集其个人信息。如果您认为我们可能意外收集了儿童信息，请通过下方联系方式告知我们，我们会尽快处理。</p>
+
+		<h2>5. 政策更新</h2>
+		<p>我们可能会不定期更新本隐私政策，更新后的版本将发布在本页面并更新生效日期。建议您定期查看本页面以了解最新内容。</p>
+
+		<h2>6. 联系我们</h2>
+		<p>如果您对本隐私政策有任何疑问，欢迎通过<a href="/contact">联系我们</a>页面与我们联系。</p>
+	`;
+	return generateStaticPage('隐私政策', 'Check ProxyIP 隐私政策：说明本站如何处理访问数据、使用 Google AdSense 及第三方 Cookie，以及您可采取的隐私保护措施。', '/privacy', body);
+}
+
+function generateTermsHTML() {
+	const body = `
+		<h1>服务条款</h1>
+		<p class="static-updated">生效日期：2026 年 8 月 16 日</p>
+		<p>欢迎使用 Check ProxyIP（"本站"）。当您访问或使用本站时，即表示您同意遵守以下服务条款。如果您不同意本条款的任何内容，请不要使用本站。</p>
+
+		<h2>1. 服务说明</h2>
+		<p>本站提供一项免费的在线技术工具，用于检测 IP、IPv6 地址或域名作为 Cloudflare Workers "ProxyIP" 中转节点的可用性，并提供出口地区、端口等参考信息。本站不提供、不出售、不托管任何代理或 VPN 服务本身，仅对用户主动输入的目标进行技术性连通性检测。</p>
+
+		<h2>2. 使用规范</h2>
+		<p>您承诺在使用本站时遵守所在地区的法律法规，不将本站用于任何非法用途，包括但不限于未经授权访问他人网络设备、传播恶意软件、进行网络攻击或规避法律禁止的行为。您需自行判断并承担使用检测结果（包括从第三方数据库发现的候选 IP）所产生的一切后果和法律责任，本站不对第三方 IP 的所有权、合法性或安全性做任何保证。</p>
+
+		<h2>3. 无担保声明</h2>
+		<p>本站按"现状"提供，不对服务的连续性、准确性或适用于特定目的做任何明示或暗示的保证。检测结果基于实时网络请求，可能因目标节点状态变化、网络波动等因素而与实际情况存在差异，请以您自行验证的结果为准。</p>
+
+		<h2>4. 责任限制</h2>
+		<p>在法律允许的最大范围内，本站及其运营者不对因使用或无法使用本站服务而产生的任何直接或间接损失承担责任，包括但不限于数据丢失、业务中断或第三方索赔。</p>
+
+		<h2>5. 广告与第三方链接</h2>
+		<p>本站通过 Google AdSense 展示第三方广告以维持运营成本，广告内容由 Google 及其合作广告主提供，本站不对广告内容的真实性或所链接第三方网站的行为负责。</p>
+
+		<h2>6. 条款变更</h2>
+		<p>我们可能随时更新本服务条款，更新后的条款将在本页面公布并即时生效。继续使用本站即表示您接受更新后的条款。</p>
+
+		<h2>7. 联系方式</h2>
+		<p>如对本条款有任何疑问，请通过<a href="/contact">联系我们</a>页面与我们联系。</p>
+	`;
+	return generateStaticPage('服务条款', 'Check ProxyIP 服务条款：说明工具的使用范围、用户责任、免责声明以及广告展示相关约定。', '/terms', body);
+}
+
+function generateContactHTML() {
+	const body = `
+		<h1>联系我们</h1>
+		<p>如果您在使用 Check ProxyIP 时遇到问题、发现 Bug，或者有功能建议、合作意向，欢迎通过以下方式联系我们：</p>
+		<h2>电子邮箱</h2>
+		<p>📧 <a href="mailto:contact@vipba.nyc.mn">contact@vipba.nyc.mn</a></p>
+		<p style="font-size:13px;color:var(--muted);">（请将上方邮箱替换为您实际可接收邮件的地址）</p>
+		<h2>反馈建议</h2>
+		<p>我们非常重视用户反馈，欢迎告诉我们您希望增加的功能、遇到的检测异常，或对隐私政策与服务条款的疑问。我们会尽量在合理时间内回复。</p>
+		<h2>版权与广告合规</h2>
+		<p>如果您是版权方或广告合规相关方，需要就本站内容提出诉求，也请通过上方邮箱与我们联系，并简要说明相关情况，我们会及时处理。</p>
+	`;
+	return generateStaticPage('联系我们', 'Check ProxyIP 联系方式：反馈问题、提出功能建议或合作咨询。', '/contact', body);
+}
+
+function generateFaqHTML() {
+	const body = `
+		<h1>常见问题</h1>
+		<div class="faq-item">
+			<h2>什么是 ProxyIP？</h2>
+			<p>ProxyIP 是指能够成功代理到 Cloudflare 服务的第三方 IP 地址。由于 Cloudflare Workers 的出站 TCP 连接不允许直接指向 Cloudflare 自身的 IP 段，一些需要与 Cloudflare 边缘网络建立 TCP 连接的开源项目（例如 edgetunnel、epeius 等）就需要借助 ProxyIP 作为中转节点来绕开这一限制。</p>
+		</div>
+		<div class="faq-item">
+			<h2>本站是怎么判断一个 ProxyIP 是否"可用"的？</h2>
+			<p>我们不是做简单的 ping 测试，而是尝试模拟真实链路：向目标地址的指定端口（通常是 443）发起 TCP 连接，并验证其是否具备反向代理 Cloudflare IP 段的 HTTPS 服务能力。只有真正跑通这条链路的节点，才会被判定为可用。</p>
+		</div>
+		<div class="faq-item">
+			<h2>为什么有些网上流传的 ProxyIP 列表检测不通过？</h2>
+			<p>ProxyIP 通常是第三方自建或临时开放的节点，具有较强的时效性，可能随时因为服务器下线、限流、IP 变更等原因失效。因此建议每次使用前都用本工具重新验证，而不要直接使用未经验证的历史列表。</p>
+		</div>
+		<div class="faq-item">
+			<h2>单个检测和批量检测有什么区别？</h2>
+			<p>单条模式适合快速验证一两个目标，并会保存最近的检测历史方便回填；批量模式可以一次粘贴多行 IP / 域名列表进行检测，检测结果支持按地区、状态筛选，并可导出为剪贴板文本、TXT 或 CSV 文件。</p>
+		</div>
+		<div class="faq-item">
+			<h2>"获取更多 ProxyIP"功能的数据来自哪里？</h2>
+			<p>该功能调用了 FOFA 网络空间测绘数据库的公开检索能力，按您选择的地区和端口条件发现候选 IP，您可以将结果直接放回检测模块进行可用性验证。</p>
+		</div>
+		<div class="faq-item">
+			<h2>使用本站是否需要注册或付费？</h2>
+			<p>不需要。Check ProxyIP 完全免费，无需注册账号即可使用全部检测功能。我们通过展示 Google 广告来维持 Cloudflare Workers 及相关接口的运行成本。</p>
+		</div>
+		<div class="faq-item">
+			<h2>我可以用检测到的 ProxyIP 做什么？</h2>
+			<p>本站只提供技术层面的连通性检测结果，不对第三方节点的所有权、合法性或用途做任何背书。您需要自行确保使用方式符合所在地区的法律法规，具体可参阅<a href="/terms">服务条款</a>。</p>
+		</div>
+	`;
+	return generateStaticPage('常见问题', 'Check ProxyIP 常见问题解答：什么是 ProxyIP、如何判断可用性、单个与批量检测的区别，以及 FOFA 节点发现功能说明。', '/faq', body);
+}
+
+function generateSitemapXML() {
+	const pages = ['/', '/faq', '/about', '/contact', '/privacy', '/terms'];
+	const urlEntries = pages.map(path => `\t<url>\n\t\t<loc>https://vipba.nyc.mn${path}</loc>\n\t</url>`).join('\n');
+	return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlEntries}\n</urlset>`;
 }
 
 // ==================== local /check implementation ====================
