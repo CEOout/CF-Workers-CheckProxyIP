@@ -549,9 +549,7 @@ function generateHTML(备案内容) {
 
 		.site-header {
 			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			gap: 24px;
+			flex-direction: column;
 			margin-bottom: 24px;
 		}
 
@@ -565,9 +563,10 @@ function generateHTML(备案内容) {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-			gap: 6px 18px;
-			margin-top: 10px;
-			font-size: 13px;
+			gap: 8px 20px;
+			margin-top: 0;
+			font-size: 16px;
+			font-weight: 600;
 		}
 
 		.site-nav .theme-toggle {
@@ -636,7 +635,7 @@ function generateHTML(备案内容) {
 			line-height: 1.6;
 			text-align: left;
 			font-size: 12px;
-			margin-top: 8px;
+			margin-top: 10px;
 		}
 
 		.theme-toggle {
