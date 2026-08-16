@@ -99,6 +99,8 @@ Sitemap: https://vipba.nyc.mn/sitemap.xml`,
 			return new Response(generateIpLookupHTML(), { headers: { 'Content-Type': 'text/html; charset=UTF-8' } });
 		} else if (url.pathname === '/api/iplookup') {
 			return handleIpLookupRequest(request);
+		} else if (url.pathname === '/api/edge-info') {
+			return handleEdgeInfoRequest(request);
 		}
 		return new Response(generateHTML(备案内容), {
 			headers: { 'Content-Type': 'text/html; charset=UTF-8' }
@@ -3575,25 +3577,24 @@ function generateHTML(备案内容) {
 
 			backendServicePromise = Promise.all([
 				loadCfLocations(),
-				fetchTextWithTimeout('https://api.090227.xyz/cdn-cgi/trace', { cache: 'no-store' }, 8000)
+				fetch('/api/edge-info', { cache: 'no-store' }).then(function (response) {
+					if (!response.ok) {
+						throw new Error('Failed to load edge info: ' + response.status);
+					}
+					return response.json();
+				})
 			]).then(function (results) {
-				const traceResult = results[1];
-				const payload = parseTracePayload(traceResult?.payload);
-
-				if (!traceResult?.response?.ok) {
-					throw new Error('Failed to load backend trace: ' + traceResult?.response?.status);
-				}
-
-				const coloCode = normalizeColoCode(payload?.colo);
+				const edgeInfo = results[1];
+				const coloCode = normalizeColoCode(edgeInfo?.colo);
 				const cfLocation = getCfLocation(coloCode);
-				const countryCode = String(cfLocation?.country || '').trim().toUpperCase();
-				const city = String(cfLocation?.city || '').trim();
+				const countryCode = String(edgeInfo?.countryCode || cfLocation?.country || '').trim().toUpperCase();
+				const city = String(edgeInfo?.city || cfLocation?.city || '').trim();
 				const locationLabel = [countryCode, city].filter(Boolean).join(' · ');
-				const titleText = '当前实际由 Cloudflare '
+				const titleText = '当前请求就近由 Cloudflare '
 					+ (coloCode || '未知')
 					+ ' 机房'
 					+ (locationLabel ? '（' + locationLabel + '）' : '')
-					+ ' 的验证后端发起连通性测试。若被测试对象距离该测试后端过远，可能因网络延迟过高或连接超时而误报为不可用，这并不一定代表该目标在你的实际使用环境中同样不可用。';
+					+ ' 处理，检测时也会从该机房发起连通性测试。若被测试对象距离该机房过远，可能因网络延迟过高或连接超时而误报为不可用，这并不一定代表该目标在你的实际使用环境中同样不可用。';
 
 				setSummaryBackendStatus(countryCode + ' · ' + coloCode + ' 服务已就绪', 'ready', titleText);
 				updateSummaryBackendFlag(getFlagUrlFromCountryCode(countryCode));
@@ -3601,9 +3602,7 @@ function generateHTML(备案内容) {
 				return {
 					colo: coloCode,
 					countryCode: countryCode,
-					city: city,
-					host: String(payload?.h || '').trim(),
-					ip: String(payload?.ip || '').trim()
+					city: city
 				};
 			}).catch(function (error) {
 				console.error('Failed to load backend service info', error);
@@ -6291,6 +6290,19 @@ async function handleIpLookupRequest(request) {
 			headers: { 'Content-Type': 'application/json; charset=UTF-8' }
 		});
 	}
+}
+
+function handleEdgeInfoRequest(request) {
+	const cf = request.cf || {};
+	return new Response(JSON.stringify({
+		success: true,
+		colo: cf.colo || '',
+		countryCode: String(cf.country || '').toUpperCase(),
+		city: cf.city || '',
+		region: cf.region || ''
+	}), {
+		headers: { 'Content-Type': 'application/json; charset=UTF-8' }
+	});
 }
 
 function generateSitemapXML() {
