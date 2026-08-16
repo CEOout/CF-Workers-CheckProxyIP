@@ -631,11 +631,12 @@ function generateHTML(备案内容) {
 		}
 
 		.header-note {
-			max-width: 420px;
+			max-width: 640px;
 			color: var(--muted);
-			line-height: 1.7;
-			text-align: right;
-			flex: 0 1 420px;
+			line-height: 1.6;
+			text-align: left;
+			font-size: 12px;
+			margin-top: 8px;
 		}
 
 		.theme-toggle {
@@ -2812,7 +2813,6 @@ function generateHTML(备案内容) {
 		<div class="ambient ambient-two"></div>
 
 		<header class="site-header">
-			<div class="header-note">基于 Cloudflare 的 ProxyIP 检测工具，支持单个或批量目标解析、可用性验证与出口信息查看。</div>
 			<nav class="site-nav" aria-label="网站导航">
 				<a href="/">首页</a>
 				<a href="/#proxyip-check">ProxyIP检测</a>
@@ -2842,6 +2842,7 @@ function generateHTML(备案内容) {
 					</span>
 				</button>
 			</nav>
+			<div class="header-note">基于 Cloudflare 的 ProxyIP 检测工具，支持单个或批量目标解析、可用性验证与出口信息查看。</div>
 		</header>
 
 		<main class="site-main">
