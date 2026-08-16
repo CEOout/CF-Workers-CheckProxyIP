@@ -563,15 +563,21 @@ function generateHTML(备案内容) {
 			display: flex;
 			flex-wrap: wrap;
 			align-items: center;
-			justify-content: space-between;
-			gap: 8px 20px;
+			justify-content: flex-start;
+			gap: 10px 28px;
 			margin-top: 0;
 			font-size: 16px;
 			font-weight: 600;
 		}
 
+		.site-nav a {
+			display: inline-flex;
+			align-items: center;
+			line-height: 1;
+		}
+
 		.site-nav .theme-toggle {
-			margin-left: 0;
+			margin-left: auto;
 		}
 
 		.site-nav a {
