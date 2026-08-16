@@ -95,6 +95,10 @@ Sitemap: https://vipba.nyc.mn/sitemap.xml`,
 			return new Response(generateContactHTML(), { headers: { 'Content-Type': 'text/html; charset=UTF-8' } });
 		} else if (url.pathname === '/faq' || url.pathname === '/faq/') {
 			return new Response(generateFaqHTML(), { headers: { 'Content-Type': 'text/html; charset=UTF-8' } });
+		} else if (url.pathname === '/ip' || url.pathname === '/ip/') {
+			return new Response(generateIpLookupHTML(), { headers: { 'Content-Type': 'text/html; charset=UTF-8' } });
+		} else if (url.pathname === '/api/iplookup') {
+			return handleIpLookupRequest(request);
 		}
 		return new Response(generateHTML(备案内容), {
 			headers: { 'Content-Type': 'text/html; charset=UTF-8' }
@@ -560,9 +564,14 @@ function generateHTML(备案内容) {
 		.site-nav {
 			display: flex;
 			flex-wrap: wrap;
+			align-items: center;
 			gap: 6px 18px;
 			margin-top: 10px;
 			font-size: 13px;
+		}
+
+		.site-nav .theme-toggle {
+			margin-left: auto;
 		}
 
 		.site-nav a {
@@ -2803,48 +2812,41 @@ function generateHTML(备案内容) {
 		<div class="ambient ambient-two"></div>
 
 		<header class="site-header">
-			<div class="brand">
-				<div class="brand-title">Check ProxyIP</div>
-				<div class="brand-chip">
-					<span class="brand-chip-text">
-						<span class="brand-dot"></span>
-						<span>Cloudflare Workers Toolkit</span>
-					</span>
-					<button class="theme-toggle" type="button" id="themeToggle" aria-label="切换日间和夜间模式" title="切换日间和夜间模式">
-						<span class="theme-toggle-switch" aria-hidden="true">
-							<svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<circle cx="12" cy="12" r="4"></circle>
-								<path d="M12 2v2"></path>
-								<path d="M12 20v2"></path>
-								<path d="m4.93 4.93 1.41 1.41"></path>
-								<path d="m17.66 17.66 1.41 1.41"></path>
-								<path d="M2 12h2"></path>
-								<path d="M20 12h2"></path>
-								<path d="m6.34 17.66-1.41 1.41"></path>
-								<path d="m19.07 4.93-1.41 1.41"></path>
-							</svg>
-							<span class="theme-toggle-thumb"></span>
-							<svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path>
-							</svg>
-						</span>
-					</button>
-				</div>
-			</div>
 			<div class="header-note">基于 Cloudflare 的 ProxyIP 检测工具，支持单个或批量目标解析、可用性验证与出口信息查看。</div>
 			<nav class="site-nav" aria-label="网站导航">
 				<a href="/">首页</a>
+				<a href="/#proxyip-check">ProxyIP检测</a>
+				<a href="/ip">IP地址检测</a>
 				<a href="/faq">常见问题</a>
 				<a href="/about">关于我们</a>
 				<a href="/contact">联系我们</a>
 				<a href="/privacy">隐私政策</a>
 				<a href="/terms">服务条款</a>
+				<button class="theme-toggle" type="button" id="themeToggle" aria-label="切换日间和夜间模式" title="切换日间和夜间模式">
+					<span class="theme-toggle-switch" aria-hidden="true">
+						<svg class="theme-toggle-icon theme-toggle-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="12" cy="12" r="4"></circle>
+							<path d="M12 2v2"></path>
+							<path d="M12 20v2"></path>
+							<path d="m4.93 4.93 1.41 1.41"></path>
+							<path d="m17.66 17.66 1.41 1.41"></path>
+							<path d="M2 12h2"></path>
+							<path d="M20 12h2"></path>
+							<path d="m6.34 17.66-1.41 1.41"></path>
+							<path d="m19.07 4.93-1.41 1.41"></path>
+						</svg>
+						<span class="theme-toggle-thumb"></span>
+						<svg class="theme-toggle-icon theme-toggle-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"></path>
+						</svg>
+					</span>
+				</button>
 			</nav>
 		</header>
 
 		<main class="site-main">
 			<section class="workspace-grid">
-				<div class="surface-card control-panel">
+				<div class="surface-card control-panel" id="proxyip-check">
 					<div class="panel-header">
 						<div>
 							<p class="section-kicker">Workspace</p>
@@ -3166,6 +3168,8 @@ function generateHTML(备案内容) {
 		<footer class="site-footer">
 			<nav class="site-nav" aria-label="页脚导航">
 				<a href="/">首页</a>
+				<a href="/#proxyip-check">ProxyIP检测</a>
+				<a href="/ip">IP地址检测</a>
 				<a href="/faq">常见问题</a>
 				<a href="/about">关于我们</a>
 				<a href="/contact">联系我们</a>
@@ -5593,6 +5597,8 @@ function generateHTML(备案内容) {
 function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
 	const navItems = [
 		{ href: '/', label: '首页' },
+		{ href: '/#proxyip-check', label: 'ProxyIP检测' },
+		{ href: '/ip', label: 'IP地址检测' },
 		{ href: '/faq', label: '常见问题' },
 		{ href: '/about', label: '关于我们' },
 		{ href: '/contact', label: '联系我们' },
@@ -5831,8 +5837,7 @@ function generateContactHTML() {
 		<h1>联系我们</h1>
 		<p>如果您在使用 Check ProxyIP 时遇到问题、发现 Bug，或者有功能建议、合作意向，欢迎通过以下方式联系我们：</p>
 		<h2>电子邮箱</h2>
-		<p>📧 <a href="mailto:contact@vipba.nyc.mn">contact@vipba.nyc.mn</a></p>
-		<p style="font-size:13px;color:var(--muted);">（请将上方邮箱替换为您实际可接收邮件的地址）</p>
+		<p>📧 <a href="mailto:admin@vipba.nyc.mn">admin@vipba.nyc.mn</a></p>
 		<h2>反馈建议</h2>
 		<p>我们非常重视用户反馈，欢迎告诉我们您希望增加的功能、遇到的检测异常，或对隐私政策与服务条款的疑问。我们会尽量在合理时间内回复。</p>
 		<h2>版权与广告合规</h2>
