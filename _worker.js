@@ -5728,6 +5728,80 @@ function generateStaticPage(pageTitle, description, activePath, bodyHtml) {
 		.static-card .faq-item {
 			margin-bottom: 24px;
 		}
+		.ip-lookup-box {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin: 20px 0;
+		}
+		.ip-lookup-box input {
+			flex: 1 1 260px;
+			padding: 12px 14px;
+			border-radius: 12px;
+			border: 1px solid var(--line);
+			background: rgba(255, 255, 255, 0.04);
+			color: var(--text);
+			font-size: 14px;
+		}
+		html[data-theme='light'] .ip-lookup-box input {
+			background: rgba(15, 35, 55, 0.03);
+		}
+		.ip-lookup-box button {
+			padding: 12px 22px;
+			border-radius: 12px;
+			border: none;
+			cursor: pointer;
+			font-weight: 600;
+			font-size: 14px;
+			color: #04202a;
+			background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+		}
+		.ip-result {
+			margin: 8px 0 28px;
+		}
+		.ip-loading, .ip-error {
+			color: var(--muted);
+			font-size: 14px;
+		}
+		.ip-error { color: #ff8686; }
+		.ip-result-card {
+			border: 1px solid var(--line);
+			border-radius: 16px;
+			padding: 20px 22px;
+			background: rgba(97, 219, 255, 0.05);
+		}
+		.ip-result-main {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			gap: 10px;
+			margin-bottom: 16px;
+		}
+		.ip-result-ip {
+			font-size: 20px;
+			font-weight: 700;
+			font-family: 'JetBrains Mono', monospace;
+		}
+		.ip-result-tag {
+			font-size: 12px;
+			color: var(--accent);
+		}
+		.ip-result-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+			gap: 14px 20px;
+		}
+		.ip-result-grid span {
+			display: block;
+			font-size: 12px;
+			color: var(--muted);
+			margin-bottom: 4px;
+		}
+		.ip-result-grid strong {
+			font-size: 14px;
+			color: var(--text);
+			font-weight: 600;
+		}
 		.static-footer {
 			text-align: center;
 			color: var(--muted);
@@ -5880,6 +5954,162 @@ function generateFaqHTML() {
 		</div>
 	`;
 	return generateStaticPage('常见问题', 'Check ProxyIP 常见问题解答：什么是 ProxyIP、如何判断可用性、单个与批量检测的区别，以及 FOFA 节点发现功能说明。', '/faq', body);
+}
+
+function generateIpLookupHTML() {
+	const body = `
+		<h1>IP 地址查询</h1>
+		<p>查询任意 IPv4 / IPv6 地址的归属地、运营商、ASN、时区等信息；不输入内容直接查询，将自动显示您当前的公网 IP。</p>
+		<div class="ip-lookup-box">
+			<input id="ipInput" type="text" placeholder="留空查询本机IP，或输入 IP / IPv6 地址后按 Enter" autocomplete="off" spellcheck="false" />
+			<button id="ipLookupBtn" type="button">查询</button>
+		</div>
+		<div id="ipResult" class="ip-result"><p class="ip-loading">正在查询…</p></div>
+
+		<h2>这个工具能查到什么</h2>
+		<ul>
+			<li>IP 所属的国家/地区、省份、城市、大洲</li>
+			<li>ISP 运营商、所属网络组织与 ASN 编号</li>
+			<li>时区、经纬度、邮编等辅助信息</li>
+		</ul>
+		<p>常见用途：确认本机公网 IP 出口地区是否符合预期、核实一个 ProxyIP 候选节点的真实归属地、排查跨境访问异常等，可以配合<a href="/#proxyip-check">ProxyIP检测</a>一起使用。</p>
+
+		<script>
+		(function () {
+			var input = document.getElementById('ipInput');
+			var btn = document.getElementById('ipLookupBtn');
+			var resultBox = document.getElementById('ipResult');
+
+			function esc(str) {
+				return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+					return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+				});
+			}
+
+			function renderLoading() {
+				resultBox.innerHTML = '<p class="ip-loading">正在查询…</p>';
+			}
+
+			function renderError(msg) {
+				resultBox.innerHTML = '<p class="ip-error">' + esc(msg || '查询失败，请稍后重试') + '</p>';
+			}
+
+			function renderResult(data) {
+				var latLng = (data.latitude != null && data.longitude != null) ? (data.latitude + ', ' + data.longitude) : '-';
+				resultBox.innerHTML =
+					'<div class="ip-result-card">' +
+						'<div class="ip-result-main">' +
+							'<div class="ip-result-ip">' + esc(data.query) + '</div>' +
+							'<div class="ip-result-tag">' + (data.isSelf ? '这是您当前的公网 IP 地址' : '查询结果') + '</div>' +
+						'</div>' +
+						'<div class="ip-result-grid">' +
+							'<div><span>国家/地区</span><strong>' + esc((data.flagEmoji || '') + ' ' + (data.country || '-') + (data.countryCode ? ' (' + data.countryCode + ')' : '')) + '</strong></div>' +
+							'<div><span>省份/地区</span><strong>' + esc(data.region || '-') + '</strong></div>' +
+							'<div><span>城市</span><strong>' + esc(data.city || '-') + '</strong></div>' +
+							'<div><span>大洲</span><strong>' + esc(data.continent || '-') + '</strong></div>' +
+							'<div><span>ISP / 运营商</span><strong>' + esc(data.isp || '-') + '</strong></div>' +
+							'<div><span>所属组织</span><strong>' + esc(data.org || '-') + '</strong></div>' +
+							'<div><span>ASN</span><strong>' + esc(data.asn || '-') + '</strong></div>' +
+							'<div><span>时区</span><strong>' + esc(data.timezone || '-') + '</strong></div>' +
+							'<div><span>经纬度</span><strong>' + esc(latLng) + '</strong></div>' +
+							'<div><span>邮编</span><strong>' + esc(data.postal || '-') + '</strong></div>' +
+						'</div>' +
+					'</div>';
+			}
+
+			async function doLookup(ip) {
+				renderLoading();
+				try {
+					var resp = await fetch('/api/iplookup' + (ip ? ('?ip=' + encodeURIComponent(ip)) : ''));
+					var data = await resp.json();
+					if (!data || data.success === false) {
+						renderError(data && data.message);
+						return;
+					}
+					renderResult(data);
+				} catch (e) {
+					renderError('网络异常，请稍后重试');
+				}
+			}
+
+			btn.addEventListener('click', function () { doLookup(input.value.trim()); });
+			input.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter') doLookup(input.value.trim());
+			});
+
+			doLookup('');
+		})();
+		</script>
+	`;
+	return generateStaticPage('IP 地址查询', '在线查询任意 IPv4 / IPv6 地址的国家地区、城市、ISP 运营商、ASN 与时区信息，也可直接查看本机公网 IP。', '/ip', body);
+}
+
+async function handleIpLookupRequest(request) {
+	try {
+		const reqUrl = new URL(request.url);
+		const rawIp = (reqUrl.searchParams.get('ip') || '').trim();
+		const visitorIp = request.headers.get('CF-Connecting-IP') || request.headers.get('x-real-ip') || '';
+		const targetIp = rawIp || visitorIp;
+
+		if (!targetIp) {
+			return new Response(JSON.stringify({ success: false, message: '无法获取 IP 地址，请手动输入要查询的 IP' }), {
+				headers: { 'Content-Type': 'application/json; charset=UTF-8' }
+			});
+		}
+
+		const fields = 'status,message,country,countryCode,region,regionName,city,zip,lat,lon,timezone,isp,org,as,query';
+		const apiResp = await fetch('http://ip-api.com/json/' + encodeURIComponent(targetIp) + '?fields=' + fields, {
+			headers: { 'User-Agent': 'Mozilla/5.0 (compatible; CheckProxyIP-Worker)' }
+		});
+
+		if (!apiResp.ok) {
+			throw new Error('上游查询接口返回异常 (' + apiResp.status + ')');
+		}
+
+		const data = await apiResp.json();
+
+		if (!data || data.status !== 'success') {
+			return new Response(JSON.stringify({
+				success: false,
+				message: (data && data.message) || 'IP 地址查询失败，请检查格式是否正确',
+				query: targetIp
+			}), {
+				headers: { 'Content-Type': 'application/json; charset=UTF-8' }
+			});
+		}
+
+		let flagEmoji = '';
+		if (data.countryCode && /^[A-Z]{2}$/i.test(data.countryCode)) {
+			flagEmoji = data.countryCode.toUpperCase().replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt(0)));
+		}
+
+		const result = {
+			success: true,
+			isSelf: !rawIp,
+			query: data.query || targetIp,
+			country: data.country || '',
+			countryCode: data.countryCode || '',
+			region: data.regionName || '',
+			city: data.city || '',
+			continent: '',
+			postal: data.zip || '',
+			latitude: data.lat,
+			longitude: data.lon,
+			timezone: data.timezone || '',
+			isp: data.isp || '',
+			org: data.org || '',
+			asn: data.as || '',
+			flagEmoji: flagEmoji
+		};
+
+		return new Response(JSON.stringify(result), {
+			headers: { 'Content-Type': 'application/json; charset=UTF-8' }
+		});
+	} catch (error) {
+		return new Response(JSON.stringify({ success: false, message: '查询服务暂时不可用：' + error.message }), {
+			headers: { 'Content-Type': 'application/json; charset=UTF-8' }
+		});
+	}
 }
 
 function generateSitemapXML() {
